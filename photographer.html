@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
+    <title>Fisheye - photographe </title>
+  </head>
+  <body>
+    <header>
+      <a tabindex='0' href="index.html"><img src="assets/images/logo.png" alt = "Fisheye home page" class="logo" /></a>
+    </header>
+    <main id="main">
+      <div class="photograph-header"></div>
+        <aside  class="filter-container">
+          <label tabindex='0' class="filter" for="filter">Trier par</label>
+  
+          <label  tabindex="0" class="filter-label" role="button">Popularité</label>
+          <span class="fas fa-chevron-down chevron"></span>
+  
+          <div
+            class="filter-wrapper"
+            id="filter"
+            tabindex="0"
+            role="button"
+            aria-activedescendant="filter-rate"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-owns="filter-rate filter-date filter-title"
+          >
+            <ul
+              class="filter-listbox"
+              role="listbox"
+              aria-labelledby="filter-label"
+            >
+              <li
+                class="filter-listbox-option border"
+                role="option"
+                id="filter-rate"
+                aria-selected="true"
+                data-listbox-value="rate"
+                data-listbox-name="Popularité"
+                data-order-by="likes"
+                tabindex="0"
+              >
+                Popularité
+              </li>
+              <li
+                class="filter-listbox-option"
+                role="option"
+                id="filter-date"
+                data-listbox-value="date"
+                data-listbox-name="Date"
+                data-order-by="date"
+                tabindex="0"
+              >
+                Date
+              </li>
+              <li
+                class="filter-listbox-option"
+                role="option"
+                id="filter-title"
+                data-listbox-value="title"
+                data-order-by="title"
+                data-listbox-name="Titre"
+                tabindex="0"
+              >
+                Titre
+              </li>
+            </ul>
+          </div>
+        </aside>
+  
+     
+      <!-- Gallery-->
+        <section id="media" class="media"></section>
+        <div class="likes-price"></div>
+      </main>
+  
+      <!-- Modal contact -->
+      <aside id="contact_modal" role="dialog" aria-labelledby="modal-contact-title" aria-modal="true">
+        <div class="modal">
+          <header>
+            <h2 class="contact-h2"></h2>
+            <img src="assets/icons/close.svg" alt="Fermer" aria-label="Fermer" onclick="closeModal()" />
+          </header>
+          <form>
+            <div >
+              <label tabindex="0" for="firstname">Prénom</label>
+              <input type="text" data-error="Le nom doit contenir au minimum 2 caractères" name="firstname" minlength="2" title="Le prénom doit contenir au minimum 2 caractères" required="" />
+              <label tabindex="0" for="lastname">Nom</label>
+              <input type="text" name="lastname" minlength="2" title="Le nom doit contenir au minimum 2 caractères" required="" />
+              <label tabindex="0" for="email">Email</label>
+              <input type="text" name="email" data-error="L'adresse e-mail doit être valide" title="L'adresse e-mail doit être valide" required=""/>
+              <label tabindex="0" for="message">Votre message</label>
+              <textarea name="message" id="message" type="text" minlength="5" title="Le message doit contenir au minimum 5 caractères" required=""></textarea>
+            </div>
+            <button class="contact_button">Envoyer</button>
+          </form>
+        </div>
+      </aside>
+  
+      <!-- Modal lightbox -->
+      <aside class="lightbox">
+        <div class="lightbox-container" aria-label="photo en gros plan">
+          <span class="fas fa-chevron-left" aria-label="Précédent" role="button" ></span>
+          <div class="lightbox-img"></div>
+            <span class="fas fa-times" aria-label="Fermer" role="button"></span>
+          <div>
+            <span class="fas fa-chevron-right" aria-label="Suivant" role="button"></span>
+          </div>
+        </div>
+      </aside>
+    <script src="/scripts/utils/contactForm.js"></script>
+    <script src="scripts/pages/photographer.js"></script>
+    <script src="https://kit.fontawesome.com/e6ece1fded.js"crossorigin="anonymous"></script>
+  </body>
+</html>
