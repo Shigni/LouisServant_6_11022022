@@ -1,5 +1,5 @@
 let tab = [];
-
+//Récupération des datas
 const fetchPhotographers = async () => {
   await fetch('data/photographers.json')
     .then((res) => res.json())
@@ -12,7 +12,7 @@ async function getPhotographers() {
   const photographers = tab;
   return { photographers: [...photographers] };
 }
-
+//  Display des datas
 async function displayData(photographers) {
   const photographersSection = document.querySelector('.photographer_section');
 
@@ -23,7 +23,7 @@ async function displayData(photographers) {
     photographersSection.appendChild(userCardDOM);
   });
 }
-
+// Init
 async function init() {
   // Récupère les datas des photographes
   const { photographers } = await getPhotographers();

@@ -25,15 +25,15 @@ let likedMedia = [];
 
 const urlId = window.location.search;
 
-// Extraction de l'id
+// Récupération de l'id
 const id = urlId.slice(1);
 
-// Récupération des données json
+// Récupération des datas
 // eslint-disable-next-line no-return-await
 const fetchPhotographePage = async () => await fetch('data/photographers.json')
   .then((res) => res.json())
   .then((data) => {
-    // trouver l'id de data egale a l'id de l'url
+    // Comparatif des id
 
     const dataPhotographe = data.photographers.find((e) => e.id === parseInt(id));
     const mediaPhotographe = data.media.filter((e) => e.photographerId === parseInt(id));
@@ -43,18 +43,18 @@ const fetchPhotographePage = async () => await fetch('data/photographers.json')
       mediaPhotographe,
     };
   });
-
+//  Init
 async function init() {
   const { dataPhotographe, mediaPhotographe } = await fetchPhotographePage();
-  // Création de la présentation du photographe
+  // Création de la bio
   header.innerHTML = `<div tabindex='0' ><h1 tabindex='0' aria-label="Le nom du photographe est ${dataPhotographe.name}" class='titre'>${dataPhotographe.name}</h1><h2 tabindex='0' aria-label="La ville du photographe est ${dataPhotographe.city} en ${dataPhotographe.country}" >${dataPhotographe.city}, ${dataPhotographe.country}</h2><p tabindex='0' aria-label="Le slogan du photographe est ${dataPhotographe.tagline}" >${dataPhotographe.tagline}</p></div><button aria-label="button ouvrir le formulaire de contact" class="contact_button hover" onclick="displayModal()">Contactez-moi</button><img tabindex='0' src="assets/photographers/${dataPhotographe.portrait}" alt="${dataPhotographe.alt}">`;
-  // Création de l'encart en bas a droite du total des likes et tarif
+  // Création de l'element like 
   displayLikePrice(dataPhotographe, mediaPhotographe);
 
-  // Création de la gallery
+  // Création de la gallerie
   displayGallery(mediaPhotographe);
 
-  // Permet d'inserer le nom du photographe dans le titre de la modal contact
+  // Ajout du nom dans la modale
   modalH2.innerText = `Contactez-moi ${dataPhotographe.name}`;
 
   // Filtre
@@ -117,7 +117,7 @@ function createMediaCard(e, i) {
   return htmlElement;
 }
 
-// Trie des photos et video par titre, date et j'aime
+// Trie des photos et video
 function sortByTitle(a, b) {
   return a.title > b.title ? 1 : -1;
 }
@@ -128,7 +128,7 @@ function sortByLikes(a, b) {
   return b.likes - a.likes;
 }
 
-// Affichage de la gallery
+// Affichage de la gallerie
 function displayGallery(mediaPhotographe, orderBy = 'likes') {
   gallery.innerHTML = '';
 
@@ -142,13 +142,13 @@ function displayGallery(mediaPhotographe, orderBy = 'likes') {
   mediaPhotographe.sort(sortBy).forEach((e, i) => {
     gallery.innerHTML += createMediaCard(e, i);
 
-    // Systeme de like
+    // like
     onLike();
 
     const img = document.querySelectorAll('.image');
     const movie = document.querySelectorAll('.video');
 
-    //  Apparition de la lightbox en fonction du clic sur une image ou video
+    //  lightbox 
     img.forEach((image) => {
       image.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -213,7 +213,7 @@ function displayGallery(mediaPhotographe, orderBy = 'likes') {
       });
     });
 
-    // Fermeture de la lightbox au clic sur le bouton croix ou avec echape
+    // Fermeture de la lightbox
     lightboxClose.addEventListener('click', () => {
       lightbox.style.display = 'none';
       main.setAttribute('aria-hidden', 'false');
@@ -229,7 +229,7 @@ function displayGallery(mediaPhotographe, orderBy = 'likes') {
   });
 }
 
-// Systeme de like, Ajout des likes au click
+// Ajout des likes
 function onLike() {
   const counterLikes = document.querySelectorAll('.likes');
   const counter = document.querySelectorAll('.counter');
@@ -256,18 +256,18 @@ function onLike() {
   });
 }
 
-// Affichage de l'encart de la totalité des likes et du prix par jour du photographe
+// Affichage des likes et du prix
 function displayLikePrice(dataPhoto, mediaPhotographe) {
   const likes = [];
   // Récupearation des likes
   mediaPhotographe.forEach((e) => {
     likes.push(e.likes);
   });
-  // Addition de tous les likes dans une variable totalLikes
+  // Addition de tous les likes
   const reducer = (acc, cur) => acc + cur;
   const totalLikes = likes.reduce(reducer);
 
-  // Injection du html avec les données du fichier json
+  // Ajout du Html
   return (likeAndPrice.innerHTML = `
       <div class="likes-price-like">
             <span aria-label="Le nombre total de j'aime est de ${totalLikes} " class="counter-total">${totalLikes}</span>
@@ -278,7 +278,7 @@ function displayLikePrice(dataPhoto, mediaPhotographe) {
       `);
 }
 
-// Bouton suivant de la lightbox
+// Bouton suivant
 function btnNext(i, mediaPhotographe) {
   const im = mediaPhotographe.map((e) => e.image);
   lightboxBtnNext.addEventListener('click', () => {
@@ -304,7 +304,7 @@ function btnNext(i, mediaPhotographe) {
   });
 }
 
-// Bouton precedent de la lightbox
+// Bouton precedent
 function btnPrev(i, mediaPhotographe) {
   const im = mediaPhotographe.map((e) => e.image);
   lightboxBtnPrev.addEventListener('click', () => {
@@ -329,7 +329,7 @@ function btnPrev(i, mediaPhotographe) {
   });
 }
 
-// Creation des cartes photos ou videos en fonction du click suivant ou precedent
+// Creation des cards
 function displayNextPrevPicture(i, mediaPhotographe) {
   const regex = /_/gi;
 
@@ -356,7 +356,7 @@ function displayNextPrevPicture(i, mediaPhotographe) {
   }
 }
 
-// Evenements sur le bouton filtre par date, like ou titre
+// Evenements sur le bouton filtre
 filterButton.addEventListener('click', () => {
   filterChoice.style.display = 'block';
   filterButton.style.display = 'none';

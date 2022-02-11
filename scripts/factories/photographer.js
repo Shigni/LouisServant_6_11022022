@@ -5,7 +5,7 @@ function photographerFactory(data) {
     const lienPhotographer = ` photographer.html?${id}`
 
 
-
+//  Création des différents éléments
     function getUserCardDOM() {
         const article = document.createElement('article')
         article.setAttribute('tabindex', 0)
