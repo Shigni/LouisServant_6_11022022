@@ -1,105 +1,105 @@
-const form = document.querySelector('form')
-const firstname = document.querySelector('input[name="firstname"]')
-const email = document.querySelector('input[name="email"]')
-const lastName = document.querySelector('input[name="lastname"]')
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-shadow */
+/* eslint-disable no-console */
+const form = document.querySelector('form');
+const firstname = document.querySelector('input[name="firstname"]');
+const email = document.querySelector('input[name="email"]');
+const lastName = document.querySelector('input[name="lastname"]');
 
-const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
-const mailRegex = /^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i
+const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+const mailRegex = /^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i;
 
-const modal = document.getElementById('contact_modal')
+const modal = document.getElementById('contact_modal');
 
 // eslint-disable-next-line no-unused-vars
-function displayModal () {
-  const main = document.querySelector('main')
-  const header = document.querySelector('header')
+function displayModal() {
+  const main = document.querySelector('main');
+  const header = document.querySelector('header');
 
-  modal.style.display = 'block'
-  main.setAttribute('aria-hidden', 'true')
-  header.setAttribute('aria-hidden', 'true')
+  modal.style.display = 'block';
+  main.setAttribute('aria-hidden', 'true');
+  header.setAttribute('aria-hidden', 'true');
 }
 // eslint-disable-next-line no-unused-vars
-function closeModal () {
-  const main = document.querySelector('main')
-  const modal = document.getElementById('contact_modal')
-  const header = document.querySelector('header')
+function closeModal() {
+  const main = document.querySelector('main');
+  const modal = document.getElementById('contact_modal');
+  const header = document.querySelector('header');
 
-  modal.style.display = 'none'
-  main.setAttribute('aria-hidden', 'false')
-  header.setAttribute('aria-hidden', 'false')
-  modal.setAttribute('aria-hidden', 'false')
+  modal.style.display = 'none';
+  main.setAttribute('aria-hidden', 'false');
+  header.setAttribute('aria-hidden', 'false');
+  modal.setAttribute('aria-hidden', 'false');
 }
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    modal.style.display = 'none'
+    modal.style.display = 'none';
   }
-})
+});
 
 form.addEventListener('submit', (e) => {
-  e.preventDefault()
+  e.preventDefault();
   if (emailValid && firstnameValid && lastNameValid) {
-    console.log('Formulaire de contact :')
+    console.log('Formulaire de contact :');
 
-    console.log('prénom :', form.firstname.value)
-    console.log('Nom :', form.lastname.value)
-    console.log('Email :', form.email.value)
-    console.log('Message :', form.message.value)
+    console.log('prénom :', form.firstname.value);
+    console.log('Nom :', form.lastname.value);
+    console.log('Email :', form.email.value);
+    console.log('Message :', form.message.value);
   } else {
-    console.log('pas ok')
+    console.log('pas ok');
   }
-})
-let firstnameValid = false
+});
+let firstnameValid = false;
 firstname.addEventListener('input', (e) => {
   if (validLastName(e)) {
-    firstnameValid = true
+    firstnameValid = true;
   } else {
-    firstnameValid = false
+    firstnameValid = false;
   }
-})
-let lastNameValid = false
+});
+let lastNameValid = false;
 lastName.addEventListener('input', (e) => {
   if (validFirstname(e)) {
-    lastNameValid = true
+    lastNameValid = true;
   } else {
-    lastNameValid = false
+    lastNameValid = false;
   }
-})
+});
 
-let emailValid = false
+let emailValid = false;
 email.addEventListener('input', (e) => {
   if (validEmail(e)) {
-    emailValid = true
+    emailValid = true;
   } else {
-    emailValid = false
+    emailValid = false;
   }
-})
+});
 
-function validEmail (e) {
+function validEmail(e) {
   if (!e.target.value.match(mailRegex)) {
-    console.log('error')
+    console.log('error');
 
-    return false
-  } else {
-    return true
+    return false;
   }
+  return true;
 }
 
-function validFirstname (e) {
+function validFirstname(e) {
   if (!e.target.value.match(nameRegex)) {
-    console.log('error')
-    firstname.closest('[data-error]').dataset.errorShow = 'true'
+    console.log('error');
+    firstname.closest('[data-error]').dataset.errorShow = 'true';
 
-    return false
-  } else {
-    return true
+    return false;
   }
+  return true;
 }
 
-function validLastName (e) {
+function validLastName(e) {
   if (!e.target.value.match(nameRegex)) {
-    console.log('error')
+    console.log('error');
 
-    return false
-  } else {
-    return true
+    return false;
   }
+  return true;
 }

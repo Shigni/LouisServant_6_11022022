@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "sass --watch scss:css"
+    "serve": "sass --watch scss:css",
+    "eslint": "eslint script/**/*.js"
   },
   "author": "",
   "license": "ISC"
