@@ -41,13 +41,12 @@ async function init() {
   const { dataPhotographe, mediaPhotographe } = await fetchPhotographePage();
   // Création de la bio
   header.innerHTML = `<div tabindex='0' ><h1 tabindex='0' aria-label="Le nom du photographe est ${dataPhotographe.name}" class='titre'>${dataPhotographe.name}</h1><h2 tabindex='0' aria-label="La ville du photographe est ${dataPhotographe.city} en ${dataPhotographe.country}" >${dataPhotographe.city}, ${dataPhotographe.country}</h2><p tabindex='0' aria-label="Le slogan du photographe est ${dataPhotographe.tagline}" >${dataPhotographe.tagline}</p></div><button aria-label="button ouvrir le formulaire de contact" class="contact_button hover" onclick="displayModal()">Contactez-moi</button><img tabindex='0' src="assets/photographers/${dataPhotographe.portrait}" alt="${dataPhotographe.alt}">`;
-  // Création de l'element like 
+  // Création du like 
   displayLikePrice(dataPhotographe, mediaPhotographe);
 
-  // Création de la gallerie
+  // Création de gallery
   displayGallery(mediaPhotographe);
-
-  // Ajout du nom dans la modale
+  // modal name
   modalH2.innerText = `Contactez-moi ${dataPhotographe.name}`;
 
   // Filtre
@@ -110,7 +109,7 @@ function createMediaCard(e, i) {
   return htmlElement;
 }
 
-// Trie des photos et video
+// Trie
 function sortByTitle(a, b) {
   return a.title > b.title ? 1 : -1;
 }
@@ -121,7 +120,7 @@ function sortByLikes(a, b) {
   return b.likes - a.likes;
 }
 
-// Affichage de la gallerie
+// Affichage
 function displayGallery(mediaPhotographe, orderBy = 'likes') {
   gallery.innerHTML = '';
 
@@ -206,7 +205,7 @@ function displayGallery(mediaPhotographe, orderBy = 'likes') {
       });
     });
 
-    // Fermeture de la lightbox
+    // Fermeture lightbox
     lightboxClose.addEventListener('click', () => {
       lightbox.style.display = 'none';
       main.setAttribute('aria-hidden', 'false');
@@ -249,14 +248,14 @@ function onLike() {
   });
 }
 
-// Affichage des likes et du prix
+// Affichage likes et du prix
 function displayLikePrice(dataPhoto, mediaPhotographe) {
   const likes = [];
-  // Récupearation des likes
+  // Récupearation likes
   mediaPhotographe.forEach((e) => {
     likes.push(e.likes);
   });
-  // Addition de tous les likes
+  // Addition likes
   const reducer = (acc, cur) => acc + cur;
   const totalLikes = likes.reduce(reducer);
 
@@ -349,7 +348,7 @@ function displayNextPrevPicture(i, mediaPhotographe) {
   }
 }
 
-// Evenements sur le bouton filtre
+// Evenements filtre
 filterButton.addEventListener('click', () => {
   filterChoice.style.display = 'block';
   filterButton.style.display = 'none';
