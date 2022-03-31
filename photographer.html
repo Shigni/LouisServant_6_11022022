@@ -1,119 +1,94 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
-    <meta charset="utf-8">
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
-    <title>Fisheye - photographe </title>
-  </head>
-  <body>
-    <header>
-      <a tabindex='0' href="index.html"><img src="assets/images/logo.png" alt = "Fisheye home page" class="logo" /></a>
-    </header>
-    <main id="main">
-      <div class="photograph-header"></div>
-        <aside  class="filter-container">
-          <label tabindex='0' class="filter" for="filter">Trier par</label>
-  
-          <label  tabindex="0" class="filter-label" role="button">Popularité</label>
-          <span class="fas fa-chevron-down chevron"></span>
-  
-          <div
-            class="filter-wrapper"
-            id="filter"
-            tabindex="0"
-            role="button"
-            aria-activedescendant="filter-rate"
-            aria-haspopup="listbox"
-            aria-expanded="false"
-            aria-owns="filter-rate filter-date filter-title"
-          >
-            <ul
-              class="filter-listbox"
-              role="listbox"
-              aria-labelledby="filter-label"
-            >
-              <li
-                class="filter-listbox-option border"
-                role="option"
-                id="filter-rate"
-                aria-selected="true"
-                data-listbox-value="rate"
-                data-listbox-name="Popularité"
-                data-order-by="likes"
-                tabindex="0"
-              >
-                Popularité
-              </li>
-              <li
-                class="filter-listbox-option"
-                role="option"
-                id="filter-date"
-                data-listbox-value="date"
-                data-listbox-name="Date"
-                data-order-by="date"
-                tabindex="0"
-              >
-                Date
-              </li>
-              <li
-                class="filter-listbox-option"
-                role="option"
-                id="filter-title"
-                data-listbox-value="title"
-                data-order-by="title"
-                data-listbox-name="Titre"
-                tabindex="0"
-              >
-                Titre
-              </li>
-            </ul>
-          </div>
-        </aside>
-  
-     
-      <!-- Gallery  -->
-        <section id="media" class="media"></section>
-        <div class="likes-price"></div>
-      </main>
-  
-      <!-- Modal contact -->
-      <aside id="contact_modal" role="dialog" aria-labelledby="modal-contact-title" aria-modal="true">
-        <div class="modal">
-          <header>
-            <h2 class="contact-h2"></h2>
-            <img src="assets/icons/close.svg" alt="Fermer" aria-label="Fermer" onclick="closeModal()" />
-          </header>
-          <form>
-            <div >
-              <label tabindex="0" for="firstname">Prénom</label>
-              <input type="text" data-error="Le nom doit contenir au minimum 2 caractères" name="firstname" minlength="2" title="Le prénom doit contenir au minimum 2 caractères" required="" />
-              <label tabindex="0" for="lastname">Nom</label>
-              <input type="text" name="lastname" minlength="2" title="Le nom doit contenir au minimum 2 caractères" required="" />
-              <label tabindex="0" for="email">Email</label>
-              <input type="text" name="email" data-error="L'adresse e-mail doit être valide" title="L'adresse e-mail doit être valide" required=""/>
-              <label tabindex="0" for="message">Votre message</label>
-              <textarea name="message" id="message" type="text" minlength="5" title="Le message doit contenir au minimum 5 caractères" required=""></textarea>
-            </div>
-            <button class="contact_button">Envoyer</button>
-          </form>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Fisheye - photographe</title>
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png" />
+  <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet" />
+  <link href="./css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <header>
+    <a href="./index.html">
+      <img src="./assets/images/logo.png" class="logo" alt="Fisheye Home page" />
+    </a>
+  </header>
+  <main id="main" aria-hidden="false">
+    <div class="photograph-header">
+      <button class="contact_button" aria-label="Contact Me">
+        Contactez-moi
+      </button>
+    </div>
+    <!-- tri -->
+    <div class="dropdown">
+      <p class="sort-by">Trier par</p>
+      <div class="sort-by-button" aria-haspopup="listbox" role="listbox">
+        <button class="dropdown-button" type="button" id="order-by" role="option" aria-selected="true">
+          <span class="dropdown-button-text">Popularité</span>
+          <em class="arrow-down fa-solid fa-angle-down"></em>
+          <em class="fa-solid fa-angle-up arrow-up"></em>
+        </button>
+        <div class="dropdown-child" aria-labelledby="order-by">
+          <hr class="child-line" />
+          <a href="#" class="sort-date" role="option">Date</a>
+          <hr class="child-line" />
+          <a href="#" class="sort-title" role="option">Titre</a>
         </div>
-      </aside>
-  
-      <!-- Modal lightbox -->
-      <aside class="lightbox">
-        <div class="lightbox-container" aria-label="photo en gros plan">
-          <span class="fas fa-chevron-left" aria-label="Précédent" role="button" ></span>
-          <div class="lightbox-img"></div>
-            <span class="fas fa-times" aria-label="Fermer" role="button"></span>
-          <div>
-            <span class="fas fa-chevron-right" aria-label="Suivant" role="button"></span>
-          </div>
+      </div>
+    </div>
+    <section class="photograph-media"></section>
+    <aside class="photograph-like"></aside>
+  </main>
+  <!-- form -->
+  <div class="background-modal"></div>
+  <div id="contact_modal" role="dialog" aria-hidden="true">
+    <div class="modal">
+      <header class="modal-header">
+        <h2 class="modal-title"></h2>
+        <img class="close-modal" src="./assets/icons/close.svg" alt="close contact form" />
+      </header>
+      <form>
+        <div>
+          <label for="first_name">Prénom</label>
+          <input type="text" id="first_name" name="first_name" />
+          <label for="last_name">Nom</label>
+          <input type="text" id="last_name" name="last_name" />
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" />
+          <label for="message">Votre message</label>
+          <textarea name="message" id="message"></textarea>
         </div>
-      </aside>
-    <script src="/scripts/utils/contactForm.js"></script>
-    <script src="scripts/pages/photographer.js"></script>
-    <script src="https://kit.fontawesome.com/e6ece1fded.js"crossorigin="anonymous"></script>
-  </body>
+        <button class="contact_button" type="submit" aria-label="envoyer">Envoyer</button>
+      </form>
+    </div>
+  </div>
+  <!-- lightbox -->
+  <div class="lightbox" role="dialog" aria-label="image closeup view">
+    <div class="lightbox-container">
+      <a class="lightbox-prev" title="previous image" href="#" aria-label="Previous image">
+        <em class="fa-solid fa-angle-left"></em>
+      </a>
+      <div class="container-media">
+        <div class="media-display"></div>
+        <h2 class="media-title"></h2>
+      </div>
+      <button class="lightbox-close" title="next image" aria-label="Close dialog"><em class="fa-solid fa-xmark"
+          aria-label="close"></em></button>
+      <a class="lightbox-next" href="#" aria-label="Next image" title="next image">
+        <em class="fa-solid fa-angle-right"></em>
+      </a>
+    </div>
+  </div>
+</body>
+<script src="./scripts/factories/photographer.js" defer></script>
+<script src="./scripts/factories/media.js" defer></script>
+<script src="./scripts/pages/photographer.js" defer></script>
+<script src="./scripts/utils/lightbox.js" defer></script>
+<script src="./scripts/utils/contactForm.js" defer></script>
+
 </html>

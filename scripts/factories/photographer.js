@@ -1,40 +1,42 @@
 function photographerFactory(data) {
-    const { name, portrait, id, city, country, tagline, price } = data;
-
-    const picture = `assets/photographers/${portrait}`
-    const lienPhotographer = ` photographer.html?${id}`
-
-
-//  Création
+    const { name, portrait, id } = data;
+  
+    const picture = `assets/photographers/${portrait}`;
+    const altPicture = `${name}`;
+  
     function getUserCardDOM() {
-        const article = document.createElement('article')
-        article.setAttribute('tabindex', 0)
-
-        const a = document.createElement('a')
-        a.innerHTML = `<img   aria-label="portrait de ${name}" src="assets/photographers/${portrait}"/><h2 aria-label="Le nom du photographe est ${name}"  >${name}</h2>`
-        a.setAttribute('href', lienPhotographer)
-
-        const h3 = document.createElement('h3')
-        h3.textContent = `${city}, ${country}`
-        h3.setAttribute('tabindex', 0)
-
-        h3.setAttribute('aria-label', `Le photographe vient de ${city} en ${country} `)
-
-        const h4 = document.createElement('h4')
-        h4.innerHTML = `${tagline}`
-        h4.setAttribute('tabindex', 0)
-        h4.setAttribute('aria-label', `Le slogan du photographe est ${tagline}`)
-
-        const p = document.createElement('p')
-        p.innerHTML = `${price}€/jour`
-        p.setAttribute('tabindex', 0)
-        p.setAttribute('aria-label', `Le tarif du photographe est de ${price}€ par jour`)
-
-        article.appendChild(a);  
-        article.appendChild(h3)
-        article.appendChild(h4)
-        article.appendChild(p)
-        return (article);
+      const article = document.createElement("article");
+      const a = document.createElement("a");
+      a.setAttribute("href", `./photographer.html?id=${id}`);
+      a.setAttribute("role", "link");
+      a.setAttribute("aria-label", name);
+      const img = document.createElement("img");
+      img.setAttribute("src", picture);
+      img.setAttribute("alt", altPicture);
+      const h2 = document.createElement("h2");
+      h2.textContent = name;
+      a.appendChild(img);
+      a.appendChild(h2);
+      article.appendChild(a);
+      return article;
     }
-    return { name, picture, getUserCardDOM }
-}
+  
+    function getPhotographerPageHeader() {
+      const photographerHeader = document.querySelector(".photograph-header");
+      const img = document.createElement("img");
+      img.setAttribute("src", picture);
+      img.setAttribute("alt", altPicture);
+      const h2 = document.createElement("h2");
+      const divImg = document.createElement("div");
+      const divText = document.createElement("div");
+      divImg.classList.add("photographer-photo");
+      divText.classList.add("photographer-info");
+      h2.textContent = name;
+      photographerHeader.appendChild(divImg);
+      divImg.appendChild(img);
+      photographerHeader.appendChild(divText);
+      divText.appendChild(h2);
+      return photographerHeader;
+    }
+    return { name, picture, getUserCardDOM, getPhotographerPageHeader };
+  }
