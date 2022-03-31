@@ -1,31 +1,32 @@
-let tab = [];
-//Récupération datas
-const fetchPhotographers = async () => {
-  await fetch('data/photographers.json')
-    .then((res) => res.json())
-    .then((data) => {
-      tab = data.photographers;
-    });
-};
 async function getPhotographers() {
-  await fetchPhotographers();
-  const photographers = tab;
-  return { photographers: [...photographers] };
+  const response = await fetch("./data/photographers.json");
+  return await response.json();
 }
-//  Display datas
+
 async function displayData(photographers) {
-  const photographersSection = document.querySelector('.photographer_section');
+  const photographersSection = document.querySelector(".photographer_section");
 
   photographers.forEach((photographer) => {
-    // eslint-disable-next-line no-undef
     const photographerModel = photographerFactory(photographer);
     const userCardDOM = photographerModel.getUserCardDOM();
+    const p = document.createElement("p");
+    const p2 = document.createElement("p");
+    const p3 = document.createElement("p");
+    const { city, country, tagline, price } = photographer;
+    p.textContent = `${city}, ${country}`;
+    p.classList.add("photographer-location");
+    p2.textContent = tagline;
+    p2.classList.add("photographer-tagline");
+    p3.textContent = `${price}€/jour`;
+    p3.classList.add("photographer-price");
+    userCardDOM.appendChild(p);
+    userCardDOM.appendChild(p2);
+    userCardDOM.appendChild(p3);
     photographersSection.appendChild(userCardDOM);
   });
 }
-// Init
+
 async function init() {
-  // get datas photographes
   const { photographers } = await getPhotographers();
   displayData(photographers);
 }

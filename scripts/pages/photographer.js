@@ -1,388 +1,159 @@
-const header = document.querySelector('.photograph-header');
-const main = document.querySelector('main');
-const gallery = document.querySelector('.media');
-const likeAndPrice = document.querySelector('.likes-price');
-const filterButton = document.querySelector('.filter-label');
-const filterChoice = document.querySelector('.filter-wrapper');
-const selectChoices = document.querySelectorAll('.filter-listbox-option');
-const chevron = document.querySelector('.chevron');
-const chevronDown = document.querySelector('.fa-chevron-down');
-const lightbox = document.querySelector('.lightbox');
-const lightboxClose = document.querySelector('.fa-times');
-const lightboxImg = document.querySelector('.lightbox-img');
-const lightboxBtnPrev = document.querySelector('.fa-chevron-left');
-const lightboxBtnNext = document.querySelector('.fa-chevron-right');
-const modalH2 = document.querySelector('.modal header h2');
+const params = new URL(document.location).searchParams;
+const id = parseInt(params.get("id"));
+let totalLikes = 0;
 
-let likedMedia = [];
+async function getdata() {
+  const response = await fetch("./data/photographers.json");
+  return await response.json();
+}
 
-const urlId = window.location.search;
+async function displayData() {
+  const data = await getdata();
+  const photographer = data.photographers.find(
+    (photographer) => photographer.id === id
+  );
+  const medias = data.media.filter((media) => media.photographerId === id);
 
-// Récupération de l'id
-const id = urlId.slice(1);
+  buildHeader(photographer);
 
-// Récupération des datas
-// eslint-disable-next-line no-return-await
-const fetchPhotographePage = async () => await fetch('data/photographers.json')
-  .then((res) => res.json())
-  .then((data) => {
-    // Comparatif des id
+  sortMedias(medias, "Popularité");
 
-    const dataPhotographe = data.photographers.find((e) => e.id === parseInt(id));
-    const mediaPhotographe = data.media.filter((e) => e.photographerId === parseInt(id));
+  buildMedia(medias);
 
-    return {
-      dataPhotographe,
-      mediaPhotographe,
-    };
-  });
-//  Init
-async function init() {
-  const { dataPhotographe, mediaPhotographe } = await fetchPhotographePage();
-  // Création de la bio
-  header.innerHTML = `<div tabindex='0' ><h1 tabindex='0' aria-label="Le nom du photographe est ${dataPhotographe.name}" class='titre'>${dataPhotographe.name}</h1><h2 tabindex='0' aria-label="La ville du photographe est ${dataPhotographe.city} en ${dataPhotographe.country}" >${dataPhotographe.city}, ${dataPhotographe.country}</h2><p tabindex='0' aria-label="Le slogan du photographe est ${dataPhotographe.tagline}" >${dataPhotographe.tagline}</p></div><button aria-label="button ouvrir le formulaire de contact" class="contact_button hover" onclick="displayModal()">Contactez-moi</button><img tabindex='0' src="assets/photographers/${dataPhotographe.portrait}" alt="${dataPhotographe.alt}">`;
-  // Création du like 
-  displayLikePrice(dataPhotographe, mediaPhotographe);
+  buildAside(medias, photographer);
 
-  // Création de gallery
-  displayGallery(mediaPhotographe);
-  // modal name
-  modalH2.innerText = `Contactez-moi ${dataPhotographe.name}`;
+  openCloseDropdownButton(medias);
 
-  // Filtre
-  selectChoices.forEach((selectChoice) => {
-    selectChoice.addEventListener('click', (e) => {
-      const choice = e.currentTarget.dataset.orderBy;
+  initLightbox();
+}
 
-      displayGallery(mediaPhotographe, choice);
-    });
-    selectChoice.addEventListener('keydown', (e) => {
-      const choice = e.currentTarget.dataset.orderBy;
-      if (e.key === 'Enter') {
-        displayGallery(mediaPhotographe, choice);
-      }
-    });
+function buildHeader(photographer) {
+  const factory = photographerFactory(photographer);
+  const header = factory.getPhotographerPageHeader();
+  const photographerInfos = header.querySelector(".photographer-info");
+  const p = document.createElement("p");
+  const p2 = document.createElement("p");
+  const p3 = document.createElement("p");
+  const buttonContact = document.querySelector(".contact_button");
+  const { city, country, tagline, price } = photographer;
+
+  p.textContent = `${city}, ${country}`;
+  p.classList.add("photographer-city");
+  p2.textContent = tagline;
+  p2.classList.add("photographer-description");
+  p3.textContent = `${price}€/jour`;
+  p3.classList.add("photographer-price");
+  header.appendChild(buttonContact);
+  photographerInfos.appendChild(p);
+  photographerInfos.appendChild(p2);
+}
+
+function buildMedia(medias) {
+  const photographMediaSection = document.querySelector(".photograph-media");
+  const mediaFactory = new MediaFactory();
+  photographMediaSection.innerHTML = "";
+  medias.forEach((media) => {
+    const { title, likes, id } = media;
+    const mediaHtml = mediaFactory.renderMedia(media);
+    const templatePhotographerMedia = `
+        <article class="photographer-media" id="media-${id}">
+          <a href="#" class="media-image" aria-label="${title}, closeup view">${mediaHtml.outerHTML}</a>
+          <div class="media-info">
+            <p class="media-title">${title}</p>
+            <div class="media-like">
+              <p class="like-number">${likes}</p>
+              <button class="button-like" type="button">
+                <em class="like-icon fa-solid fa-heart" aria-label="likes button"></em>
+              </button>
+            </div>
+          </div>
+        </article>
+        `;
+    photographMediaSection.insertAdjacentHTML(
+      "beforeend",
+      templatePhotographerMedia
+    );
+    document
+      .querySelector(`#media-${id} .button-like`)
+      .addEventListener("click", likeMedia);
   });
 }
-init();
-function createMediaCard(e, i) {
-  const regex = /_/gi;
-  let htmlElement = '';
-  if (!('image' in e)) {
-    htmlElement = `
-    <article tabindex='0' class="card">
-    <a>
-      <i class="fas fa-play"></i>
-      <video tabindex='0' id="${i}" data-titre="${e.video
-  .replace('.mp4', ' ')
-  .replace(regex, ' ')}" class="video" aria-label="${e.alt}" src="assets/photo-gallery/${e.video}">
-      </video>
-    </a>
-    <div class="card-header">
-      <h2 tabindex='0' aria-label='Le titre de la vidéo est ${e.video.replace('.mp4', ' ').replace(regex, ' ')}' >${e.video.replace('.mp4', ' ').replace(regex, ' ')}</h2>
-      <div class="card-header-like">
-        <span tabindex='0' aria-label="Le nombre de j'aime est ${e.likes}"   id='${e.likes}' class="counter">${e.likes}</span>
-        <i id='${e.likes}' class="fas fa-heart likes"></i>
-      </div>
+
+function likeMedia(event) {
+  const button = event.currentTarget;
+  if (button.dataset.liked) {
+    return;
+  }
+  const likeText = button.previousElementSibling;
+  let likeNumber = parseInt(likeText.textContent);
+  likeText.textContent = ++likeNumber;
+  document.querySelector(".like-totalnumber").textContent = ++totalLikes;
+  button.dataset.liked = true;
+}
+
+function calculateTotalLikes(medias) {
+  let sumOfLikes = 0;
+  medias.forEach((media) => {
+    const { likes } = media;
+    sumOfLikes += likes;
+  });
+  return sumOfLikes;
+}
+
+function buildAside(medias, photographer) {
+  const photographLikeAside = document.querySelector(".photograph-like");
+  const price = photographer.price;
+  totalLikes = calculateTotalLikes(medias);
+  const templateAside = `
+    <div class="total-like">
+      <p class="like-totalnumber">${totalLikes}</p>
+      <i class="fa-solid fa-heart"></i>
     </div>
-    </article>
+    <p class="salary-per-day">${price}€ / jour</p>
   `;
-  } else {
-    htmlElement = `
-      <article tabindex='0' class="card">
-      
-        <img tabindex='0' id="${i}" data-titre="${e.title}" class="image" src="assets/photo-gallery/${e.image}" alt="${
-  e.alt
-}">
-      
-      <div tabindex='0' class="card-header">
-        <h2 tabindex='0' aria-label='Le titre de la photo est ${e.title}'>${e.title}</h2>
-        <div class="card-header-like">
-          <span tabindex='0' aria-label="Le nombre de j'aime est ${e.likes}" id='${e.likes}' class="counter">${e.likes}</span>
-          <i id='${e.likes}' class="fas fa-heart likes"></i>
-        </div>
-      </div>
-      </article>
-      `;
-  }
-
-  return htmlElement;
+  photographLikeAside.insertAdjacentHTML("beforeend", templateAside);
 }
 
-// Trie
-function sortByTitle(a, b) {
-  return a.title > b.title ? 1 : -1;
+function openCloseDropdownButton(medias) {
+  const dropdown = document.querySelector(".dropdown");
+  const button = dropdown.querySelector(".dropdown-button");
+  const buttonText = button.querySelector(".dropdown-button-text");
+  button.addEventListener("click", () => {
+    dropdown.classList.toggle("open");
+  });
+
+  dropdown.querySelectorAll("a").forEach((element) => {
+    element.addEventListener("click", (event) => {
+      event.preventDefault();
+      const oldButtonValue = buttonText.textContent;
+      buttonText.textContent = event.currentTarget.textContent;
+      event.currentTarget.textContent = oldButtonValue;
+      sortMedias(medias, buttonText.textContent);
+      buildMedia(medias);
+      initLightboxLinks();
+    });
+  });
 }
-function sortByDate(a, b) {
-  return Date.parse(a.date) - Date.parse(b.date);
-}
-function sortByLikes(a, b) {
-  return b.likes - a.likes;
-}
 
-// Affichage
-function displayGallery(mediaPhotographe, orderBy = 'likes') {
-  gallery.innerHTML = '';
-
-  const sortFunctions = {
-    title: sortByTitle,
-    date: sortByDate,
-    likes: sortByLikes,
-  };
-  const sortBy = sortFunctions[orderBy];
-
-  mediaPhotographe.sort(sortBy).forEach((e, i) => {
-    gallery.innerHTML += createMediaCard(e, i);
-
-    // like
-    onLike();
-
-    const img = document.querySelectorAll('.image');
-    const movie = document.querySelectorAll('.video');
-
-    //  lightbox 
-    img.forEach((image) => {
-      image.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          lightbox.style.display = 'flex';
-          main.setAttribute('aria-hidden', 'true');
-          header.setAttribute('aria-hidden', 'true');
+function sortMedias(medias, sortBy) {
+  switch (sortBy) {
+    case "Date":
+      medias.sort((a, b) => new Date(a.date) - new Date(b.date));
+      break;
+    case "Titre":
+      medias.sort((a, b) => {
+        if (a.title > b.title) {
+          return 1;
         }
-      });
-      image.addEventListener('click', (e) => {
-        main.setAttribute('aria-hidden', 'true');
-        header.setAttribute('aria-hidden', 'true');
-
-        lightboxImg.innerHTML = `
-            <img src="${e.target.currentSrc}" alt="${e.target.alt}">
-            <h2>${e.target.dataset.titre}</h2>
-            `;
-
-        i = parseInt(e.target.id);
-        lightbox.style.display = 'flex';
-
-        btnNext(i, mediaPhotographe);
-        btnPrev(i, mediaPhotographe);
-      });
-    });
-
-    movie.forEach((video) => {
-      video.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          lightboxImg.innerHTML = `
-            <video controls>
-            <source aria-label="${e.target.dataset.titre}" src="${e.target.attributes.src.nodeValue}"
-            type="video/mp4">
-            </video>
-            <h2>${e.target.dataset.titre}</h2>           
-            `;
-          lightbox.style.display = 'flex';
-          i = parseInt(e.target.id);
-
-          btnNext(i, mediaPhotographe);
-          btnPrev(i, mediaPhotographe);
-          main.setAttribute('aria-hidden', 'true');
-          header.setAttribute('aria-hidden', 'true');
+        if (a.title < b.title) {
+          return -1;
         }
+        return 0;
       });
-      video.addEventListener('click', (e) => {
-        main.setAttribute('aria-hidden', 'true');
-        header.setAttribute('aria-hidden', 'true');
-        lightboxImg.innerHTML = `
-              <video controls>
-                <source aria-label="${e.target.dataset.titre}" src="${e.target.attributes.src.nodeValue}"
-                type="video/mp4">
-              </video>
-              <h2>${e.target.dataset.titre}</h2>           
-              `;
-
-        lightbox.style.display = 'flex';
-        // eslint-disable-next-line radix
-        i = parseInt(e.target.id);
-
-        btnNext(i, mediaPhotographe);
-        btnPrev(i, mediaPhotographe);
-      });
-    });
-
-    // Fermeture lightbox
-    lightboxClose.addEventListener('click', () => {
-      lightbox.style.display = 'none';
-      main.setAttribute('aria-hidden', 'false');
-      header.setAttribute('aria-hidden', 'false');
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        lightbox.style.display = 'none';
-        main.setAttribute('aria-hidden', 'false');
-        header.setAttribute('aria-hidden', 'false');
-      }
-    });
-  });
-}
-
-// Ajout des likes
-function onLike() {
-  const counterLikes = document.querySelectorAll('.likes');
-  const counter = document.querySelectorAll('.counter');
-  const counterTotal = document.querySelectorAll('.counter-total');
-
-  counterLikes.forEach((like) => {
-    like.addEventListener('click', (e) => {
-      counter.forEach((count) => {
-        const target = likedMedia.find((element) => element === e.target.id);
-        if (e.target.id === count.id) {
-          if (!target) {
-            count.textContent++;
-            counterTotal[0].textContent++;
-            likedMedia.push(e.target.id);
-          } else {
-            likedMedia = likedMedia.filter((element) => element !== e.target.id);
-
-            count.textContent--;
-            counterTotal[0].textContent--;
-          }
-        }
-      });
-    });
-  });
-}
-
-// Affichage likes et du prix
-function displayLikePrice(dataPhoto, mediaPhotographe) {
-  const likes = [];
-  // Récupearation likes
-  mediaPhotographe.forEach((e) => {
-    likes.push(e.likes);
-  });
-  // Addition likes
-  const reducer = (acc, cur) => acc + cur;
-  const totalLikes = likes.reduce(reducer);
-
-  // Ajout du Html
-  return (likeAndPrice.innerHTML = `
-      <div class="likes-price-like">
-            <span aria-label="Le nombre total de j'aime est de ${totalLikes} " class="counter-total">${totalLikes}</span>
-            <i class="fas fa-heart black"></i>
-      </div>
-          <p aria-label="Le tarif du photographe est de ${dataPhoto.price}€ par jour" >${dataPhoto.price}€ / jour</p>
-      
-      `);
-}
-
-// Bouton suivant
-function btnNext(i, mediaPhotographe) {
-  const im = mediaPhotographe.map((e) => e.image);
-  lightboxBtnNext.addEventListener('click', () => {
-    i += 1;
-
-    if (i === im.length) {
-      i = 0;
-    }
-
-    displayNextPrevPicture(i, mediaPhotographe);
-    btnPrev(i, mediaPhotographe);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') {
-      i += 1;
-      if (i === im.length) {
-        i = 0;
-      }
-
-      displayNextPrevPicture(i, mediaPhotographe);
-      btnPrev(i, mediaPhotographe);
-    }
-  });
-}
-
-// Bouton precedent
-function btnPrev(i, mediaPhotographe) {
-  const im = mediaPhotographe.map((e) => e.image);
-  lightboxBtnPrev.addEventListener('click', () => {
-    i -= 1;
-    if (i < 0) {
-      i = im.length - 1;
-    }
-    displayNextPrevPicture(i, mediaPhotographe);
-    btnNext(i, mediaPhotographe);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-      i -= 1;
-      if (i < 0) {
-        i = im.length - 1;
-      }
-
-      // eslint-disable-next-line no-use-before-define
-      displayNextPrevPicture(i, mediaPhotographe);
-      btnNext(i, mediaPhotographe);
-    }
-  });
-}
-
-// Creation des cards
-function displayNextPrevPicture(i, mediaPhotographe) {
-  const regex = /_/gi;
-
-  const im = mediaPhotographe.map((e) => e.image);
-  const v = mediaPhotographe.map((e) => e.video);
-  const title = mediaPhotographe.map((e) => e.title);
-  const alt = mediaPhotographe.map((e) => e.alt);
-
-  if (im[i]) {
-    lightboxImg.innerHTML = `
-          <img src="assets/photo-gallery/${im[i]}"  alt="${alt[i]}">
-          <h2>${title[i]}</h2>
-          `;
-  }
-
-  if (im[i] === undefined) {
-    lightboxImg.innerHTML = `
-      <video controls>
-      <source aria-label="${v[i].replace('.mp4', ' ').replace(regex, ' ')}" src="assets/photo-gallery/${v[i]}"
-      type="video/mp4">
-      </video>
-    <h2>${v[i].replace('.mp4', ' ').replace(regex, ' ')}</h2>
-      `;
+      break;
+    case "Popularité":
+      medias.sort((a, b) => b.likes - a.likes);
   }
 }
 
-// Evenements filtre
-filterButton.addEventListener('click', () => {
-  filterChoice.style.display = 'block';
-  filterButton.style.display = 'none';
-  chevron.classList.remove('fa-chevron-down');
-  chevron.classList.add('fa-chevron-up');
-});
-
-filterChoice.addEventListener('click', (e) => {
-  filterChoice.style.display = 'none';
-  filterButton.style.display = 'block';
-  filterButton.innerText = e.target.innerText.trim();
-  chevron.classList.remove('fa-chevron-up');
-  chevron.classList.add('fa-chevron-down');
-});
-filterChoice.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    filterChoice.style.display = 'none';
-    filterButton.style.display = 'block';
-    filterButton.innerText = e.target.innerText.trim();
-    chevron.classList.remove('fa-chevron-up');
-    chevron.classList.add('fa-chevron-down');
-  }
-});
-filterButton.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    filterChoice.style.display = 'block';
-    filterButton.style.display = 'none';
-    chevron.classList.remove('fa-chevron-down');
-    chevron.classList.add('fa-chevron-up');
-  }
-});
-chevronDown.addEventListener('click', () => {
-  filterChoice.style.display = 'block';
-  filterButton.style.display = 'none';
-  chevron.classList.remove('fa-chevron-down');
-  chevron.classList.add('fa-chevron-up');
-});
+displayData();

@@ -1,105 +1,80 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-shadow */
-/* eslint-disable no-console */
-const form = document.querySelector('form');
-const firstname = document.querySelector('input[name="firstname"]');
-const email = document.querySelector('input[name="email"]');
-const lastName = document.querySelector('input[name="lastname"]');
+const backgroundForm = document.querySelector(".background-modal");
+const modal = document.getElementById("contact_modal");
+const firstName = document.getElementById("first_name");
+const lastName = document.getElementById("last_name");
+const email = document.getElementById("email");
+const message = document.getElementById("message");
+const form = document.querySelector("form");
+const contactButton = document.querySelector(".contact_button");
+const closeButton = document.querySelector(".close-modal");
+const main = document.getElementById("main");
 
-const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
-const mailRegex = /^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i;
-
-const modal = document.getElementById('contact_modal');
-
-// eslint-disable-next-line no-unused-vars
-function displayModal() {
-  const main = document.querySelector('main');
-  const header = document.querySelector('header');
-
-  modal.style.display = 'block';
-  main.setAttribute('aria-hidden', 'true');
-  header.setAttribute('aria-hidden', 'true');
+async function getPhotographers() {
+  const response = await fetch("./data/photographers.json");
+  return await response.json();
 }
-// eslint-disable-next-line no-unused-vars
+
+async function displayData() {
+  const data = await getPhotographers();
+  const photographer = data.photographers.find(
+    (photographer) => photographer.id === id
+  );
+
+  displayName(photographer);
+
+  initModal();
+}
+
+function displayName() {
+  const name = document.querySelector(".photographer-info > h2");
+  document.querySelector(
+    ".modal-title"
+  ).innerHTML = `Contactez-moi <br> ${name.textContent}`;
+  modal.setAttribute("aria-labelledby", `Contactez-moi ${name.textContent}`);
+}
+
+function initModal() {
+  contactButton.addEventListener("click", () => {
+    openModal();
+  });
+  closeButton.addEventListener("click", () => {
+    closeModal();
+  });
+  document.addEventListener("keyup", (event) => {
+    if (modal.ariaHidden === "false" && event.key === "Escape") {
+      closeModal();
+    }
+  });
+}
+
+function openModal() {
+  main.setAttribute("aria-hidden", true);
+  modal.setAttribute("aria-hidden", false);
+  modal.style.display = "block";
+  backgroundForm.style.display = "block";
+  getTabbableElements(document).forEach((tabbable) => (tabbable.tabIndex = -1));
+  getTabbableElements(modal).forEach((tabbable) => (tabbable.tabIndex = 0));
+}
+
 function closeModal() {
-  const main = document.querySelector('main');
-  const modal = document.getElementById('contact_modal');
-  const header = document.querySelector('header');
-
-  modal.style.display = 'none';
-  main.setAttribute('aria-hidden', 'false');
-  header.setAttribute('aria-hidden', 'false');
-  modal.setAttribute('aria-hidden', 'false');
-}
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    modal.style.display = 'none';
-  }
-});
-
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (emailValid && firstnameValid && lastNameValid) {
-    console.log('Formulaire de contact :');
-
-    console.log('prénom :', form.firstname.value);
-    console.log('Nom :', form.lastname.value);
-    console.log('Email :', form.email.value);
-    console.log('Message :', form.message.value);
-  } else {
-    console.log('pas ok');
-  }
-});
-let firstnameValid = false;
-firstname.addEventListener('input', (e) => {
-  if (validLastName(e)) {
-    firstnameValid = true;
-  } else {
-    firstnameValid = false;
-  }
-});
-let lastNameValid = false;
-lastName.addEventListener('input', (e) => {
-  if (validFirstname(e)) {
-    lastNameValid = true;
-  } else {
-    lastNameValid = false;
-  }
-});
-
-let emailValid = false;
-email.addEventListener('input', (e) => {
-  if (validEmail(e)) {
-    emailValid = true;
-  } else {
-    emailValid = false;
-  }
-});
-
-function validEmail(e) {
-  if (!e.target.value.match(mailRegex)) {
-    console.log('error');
-
-    return false;
-  }
-  return true;
+  modal.style.display = "none";
+  backgroundForm.style.display = "none";
+  getTabbableElements(document).forEach((tabbable) => (tabbable.tabIndex = 0));
 }
 
-function validFirstname(e) {
-  if (!e.target.value.match(nameRegex)) {
-    console.log('error');
-    firstname.closest('[data-error]').dataset.errorShow = 'true';
-
-    return false;
-  }
-  return true;
+function getTabbableElements(zone) {
+  return zone.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
 }
 
-function validLastName(e) {
-  if (!e.target.value.match(nameRegex)) {
-    console.log('error');
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
 
-    return false;
-  }
-  return true;
-}
+  console.log(firstName.value);
+  console.log(lastName.value);
+  console.log(email.value);
+  console.log(message.value);
+});
+
+displayData();
