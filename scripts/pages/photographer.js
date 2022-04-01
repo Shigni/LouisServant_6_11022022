@@ -57,13 +57,13 @@ function buildMedia(medias) {
     const mediaHtml = mediaFactory.renderMedia(media);
     const templatePhotographerMedia = `
         <article class="photographer-media" id="media-${id}">
-          <a href="#" class="media-image" aria-label="${title}, closeup view">${mediaHtml.outerHTML}</a>
+          <a href="#" class="media-image" aria-label="${title}">${mediaHtml.outerHTML}</a>
           <div class="media-info">
             <p class="media-title">${title}</p>
             <div class="media-like">
               <p class="like-number">${likes}</p>
               <button class="button-like" type="button">
-                <em class="like-icon fa-solid fa-heart" aria-label="likes button"></em>
+                <em class="like-icon fa-solid fa-heart" aria-label="Like"></em>
               </button>
             </div>
           </div>
