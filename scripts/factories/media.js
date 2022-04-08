@@ -1,33 +1,51 @@
 class MediaFactory {
-    renderMedia(media) {
-      if (media.hasOwnProperty("image")) {
-        return new ImageFactory().createHTML(media);
-      }
-      if (media.hasOwnProperty("video")) {
-        return new VideoFactory().createHTML(media);
-      }
-      return null;
+  constructor(media) {
+    if (media.hasOwnProperty("image")) {
+      return new Image(media);
     }
-  }
-  
-  class ImageFactory {
-    createHTML(media) {
-      const image = document.createElement("img");
-      image.setAttribute("src", `assets/medias/${media.image}`);
-      image.setAttribute("alt", `${media.title}`);
-      return image;
+    if (media.hasOwnProperty("video")) {
+      return new Video(media);
     }
+    return null;
   }
-  
-  class VideoFactory {
-    createHTML(media) {
-      const video = document.createElement("video");
-      video.removeAttribute("controls");
-      const source = document.createElement("source");
-      source.setAttribute("src", `assets/medias/${media.video}`);
-      source.setAttribute("type", "video/mp4");
-      video.appendChild(source);
-  
-      return video;
-    }
+}
+
+class Image {
+  constructor(media) {
+    this.imageUrl = media.image;
+    this.title = media.title;
+    this.photographerId = media.photographerId;
+    this.id = media.id;
+    this.likes = media.likes;
+    this.date = media.date
+    this.price = media.price
   }
+  createHTML() {
+    const image = document.createElement("img");
+    image.setAttribute("src", `assets/medias/${this.imageUrl}`);
+    image.setAttribute("alt", `${this.title}`);
+    return image;
+  }
+}
+
+class Video {
+  constructor(media) {
+    this.videoUrl = media.video;
+    this.title = media.title;
+    this.photographerId = media.photographerId;
+    this.id = media.id;
+    this.likes = media.likes;
+    this.date = media.date
+    this.price = media.price
+  }
+  createHTML(){
+    const video = document.createElement("video");
+    video.removeAttribute("controls");
+    const source = document.createElement("source");
+    source.setAttribute("src", `assets/medias/${this.videoUrl}`);
+    source.setAttribute("type", "video/mp4");
+    video.appendChild(source);
+
+    return video;
+  }
+}

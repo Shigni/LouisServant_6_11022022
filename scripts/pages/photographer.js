@@ -50,11 +50,12 @@ function buildHeader(photographer) {
 
 function buildMedia(medias) {
   const photographMediaSection = document.querySelector(".photograph-media");
-  const mediaFactory = new MediaFactory();
+  
   photographMediaSection.innerHTML = "";
   medias.forEach((media) => {
+    const mediaFactory = new MediaFactory(media);
     const { title, likes, id } = media;
-    const mediaHtml = mediaFactory.renderMedia(media);
+    const mediaHtml = mediaFactory.createHTML();
     const templatePhotographerMedia = `
         <article class="photographer-media" id="media-${id}">
           <a href="#" class="media-image" aria-label="${title}">${mediaHtml.outerHTML}</a>
