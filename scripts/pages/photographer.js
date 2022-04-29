@@ -26,7 +26,7 @@ async function displayData() {
 
   initLightbox();
 }
-
+// Header Photographer
 function buildHeader(photographer) {
   const factory = photographerFactory(photographer);
   const header = factory.getPhotographerPageHeader();
@@ -47,7 +47,7 @@ function buildHeader(photographer) {
   photographerInfos.appendChild(p);
   photographerInfos.appendChild(p2);
 }
-
+// Creation des cards
 function buildMedia(medias) {
   const photographMediaSection = document.querySelector(".photograph-media");
   
@@ -79,7 +79,7 @@ function buildMedia(medias) {
       .addEventListener("click", likeMedia);
   });
 }
-
+// Likes
 function likeMedia(event) {
   const button = event.currentTarget;
   if (button.dataset.liked) {
@@ -114,7 +114,7 @@ function buildAside(medias, photographer) {
   `;
   photographLikeAside.insertAdjacentHTML("beforeend", templateAside);
 }
-
+// DropDown tri
 function openCloseDropdownButton(medias) {
   const dropdown = document.querySelector(".dropdown");
   const button = dropdown.querySelector(".dropdown-button");
@@ -135,7 +135,7 @@ function openCloseDropdownButton(medias) {
     });
   });
 }
-
+// Fonction de tri
 function sortMedias(medias, sortBy) {
   switch (sortBy) {
     case "Date":

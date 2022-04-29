@@ -20,6 +20,7 @@ class Image {
     this.date = media.date
     this.price = media.price
   }
+  
   createHTML() {
     const image = document.createElement("img");
     image.setAttribute("src", `assets/medias/${this.imageUrl}`);
@@ -38,6 +39,10 @@ class Video {
     this.date = media.date
     this.price = media.price
   }
+  /**
+     * Creates an instance of the element for the specified tag.
+     * @param tagName The name of an element.
+     */
   createHTML(){
     const video = document.createElement("video");
     video.removeAttribute("controls");
